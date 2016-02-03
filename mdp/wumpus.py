@@ -188,7 +188,7 @@ def draw_board(m, pi=None):
 
 def latex_board(m, pi, u):
     for has_gold, has_immunity in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-        print """\\begin{tabular}{|%s}\\hline""" % ('l|' * (m.vvidth+1),),
+        print """\\begin{subtable}{1.0\\textwidth}\n\\centering\n \\begin{tabular}{|%s}\\hline""" % ('l|' * (m.vvidth+1),),
         for y in range(m.height, 0, -1):
             msg = []
             for x in range(1, m.vvidth+1):
@@ -207,7 +207,8 @@ def latex_board(m, pi, u):
                     "$\\grab$"
                 msg.append("\\wumpusblock{%s}{%2.2f}{%s}{%2.2f}" % (b, ir, a, u[s]))
             print "&".join(msg) + "\\\\\\hline",
-        print """\\end{tabular}"""
+        print """\\end{tabular}\n\\caption{%s gold, %s immunity}\n\\end{subtable}""" % ("Has" if has_gold else "No",
+                                                                                    "has" if has_immunity else "no")
 
 from policy_iteration import modified_policy_iteration
 from value_iteration import value_iteration
@@ -215,19 +216,19 @@ from value_iteration import value_iteration
 
 def create_wumpus_world():
     m = WumpusMDP(4, 4, -0.04)
-    m.add_goal((1, 1), 1)
-    m.add_gold((3, 4), 1)
+    m.add_goal((1, 1), 10)
+    m.add_gold((3, 4), 10)
     m.add_immunity((2, 4))
     m.add_pit((3, 1), -20)
-    m.add_pit((3, 3), -20)
-    m.add_pit((2, 3), -20)
-    m.add_wumpus((1, 3), -2)
+    m.add_pit((3, 3), -1)
+    m.add_pit((2, 3), -600)
+    m.add_wumpus((1, 3), -50)
     return m
 
 
 def test_value_iteration():
     m = create_wumpus_world()
-    pi, u = value_iteration(m, 1, 1e-4)
+    pi, u = value_iteration(m, 1, 1e-6)
     # print pi
     draw_board(m, pi)
     latex_board(m, pi, u)
@@ -244,7 +245,7 @@ if __name__ == "__main__":
     print "#" * 80
     print
     test_value_iteration()
-    print
-    print "#" * 80
-    print
-    test_policy_iteration()
+    # print
+    # print "#" * 80
+    # print
+    # test_policy_iteration()
