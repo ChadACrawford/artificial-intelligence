@@ -109,12 +109,12 @@ def figure_1():
     scatter2 = plt.scatter(data_x, data_yg, c="g", label="Gibbs sampling")
     plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yg, 1))(data_x))
 
-    plt.legend([scatter1, scatter2])
+    plt.legend(["Likelihood weighting", "Gibbs sampling"])
     plt.xlabel("Number of Variables")
     plt.ylabel("Likelihood ratio")
 
     plt.savefig("figure_1.pdf")
-    plt.show()
+    # plt.show()
     plt.clf()
 
 
@@ -146,13 +146,131 @@ def figure_2():
     scatter2 = plt.scatter(data_x, data_yg, c="g", label="Gibbs sampling")
     plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yg, 1))(data_x))
 
-    plt.legend([scatter1, scatter2])
+    plt.legend(["Likelihood weighting", "Gibbs sampling"])
+    plt.xlabel("Number of Missing Variables")
+    plt.ylabel("Likelihood ratio")
 
     plt.savefig("figure_2.pdf")
-    plt.show()
+    # plt.show()
+    plt.clf()
+
+
+def figure_3():
+    """
+    Comparison of likelihood ratios for varying numbers of variables
+    :return:
+    """
+    num_trials = 10
+    num_vars = 4
+    min_values = 2
+    max_values = 20
+    num_missing = 2
+    data_x = []
+    data_yl = []
+    data_yg = []
+    value_range = range(min_values, max_values+1)
+    for num_values in value_range:
+        print "v:", num_values
+        for t in range(num_trials):
+            print "t:", t+1
+            data_x += [num_values]
+            y1, y2 = run(num_vars, num_values, num_missing, False, 0.3)
+            data_yl.append(y1)
+            data_yg.append(y2)
+
+    scatter1 = plt.scatter(data_x, data_yl, c="b", label="Likelihood weighting")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yl, 1))(data_x))
+    scatter2 = plt.scatter(data_x, data_yg, c="g", label="Gibbs sampling")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yg, 1))(data_x))
+
+    plt.legend(["Likelihood weighting", "Gibbs sampling"])
+    plt.xlabel("Number of Values per Variable")
+    plt.ylabel("Likelihood ratio")
+
+    plt.savefig("figure_3.pdf")
+    # plt.show()
+    plt.clf()
+
+
+def figure_4():
+    """
+    Comparison of likelihood ratios for varying numbers of variables
+    :return:
+    """
+    num_trials = 10
+    num_vars = 10
+    num_values = 2
+    num_missing = 5
+    data_x = []
+    data_yl = []
+    data_yg = []
+    p_range = np.linspace(0, 1.0, 10)
+    for p in p_range:
+        print "p:", p
+        for t in range(num_trials):
+            print "t:", t+1
+            data_x += [p]
+            y1, y2 = run(num_vars, num_values, num_missing, False, p)
+            data_yl.append(y1)
+            data_yg.append(y2)
+
+    scatter1 = plt.scatter(data_x, data_yl, c="b", label="Likelihood weighting")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yl, 1))(data_x))
+    scatter2 = plt.scatter(data_x, data_yg, c="g", label="Gibbs sampling")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yg, 1))(data_x))
+
+    plt.legend(["Likelihood weighting", "Gibbs sampling"])
+    plt.xlabel("Connection probability")
+    plt.ylabel("Likelihood ratio")
+
+    plt.savefig("figure_4.pdf")
+    # plt.show()
+    plt.clf()
+
+
+def figure_5():
+    """
+    Comparison of likelihood ratios for varying numbers of variables
+    :return:
+    """
+    NUM_TRIALS = 10
+    MIN_VARS = 2
+    MAX_VARS = 20
+    NUM_VALUES = 2
+    P_MISSING = 0.5
+    # llikel = np.zeros((MAX_VARS-MIN_VARS, NUM_TRIALS))
+    # lgibbs = np.zeros((MAX_VARS-MIN_VARS, NUM_TRIALS))
+    data_x = []
+    data_yl = []
+    data_yg = []
+    var_range = range(MIN_VARS, MAX_VARS+1)
+    for num_vars in var_range:
+        print "v:", num_vars
+        i = num_vars - MIN_VARS
+        for t in range(NUM_TRIALS):
+            print "t:", t+1
+            data_x += [num_vars]
+            y1, y2 = run(num_vars, NUM_VALUES, int(P_MISSING * NUM_VALUES) + 1, True, 0.3)
+            data_yl.append(y1)
+            data_yg.append(y2)
+
+    scatter1 = plt.scatter(data_x, data_yl, c="b", label="Likelihood weighting")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yl, 1))(data_x))
+    scatter2 = plt.scatter(data_x, data_yg, c="g", label="Gibbs sampling")
+    plt.plot(data_x, np.poly1d(np.polyfit(data_x, data_yg, 1))(data_x))
+
+    plt.legend(["Likelihood weighting", "Gibbs sampling"])
+    plt.xlabel("Number of Variables")
+    plt.ylabel("Likelihood ratio")
+
+    plt.savefig("figure_5.pdf")
+    # plt.show()
     plt.clf()
 
 
 if __name__ == "__main__":
-    figure_1()
-    figure_2()
+    # figure_1()
+    # figure_2()
+    # figure_3()
+    # figure_4()
+    figure_5()

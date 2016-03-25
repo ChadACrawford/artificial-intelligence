@@ -74,8 +74,19 @@ def _is_child(xs, x, y):
     return False
 
 
+def _all_parents(xs, x):
+    ps = []
+    for p in range(x):
+        if _is_child(xs, x, p):
+            ps.append(p)
+    return set(ps)
+
+
 def _is_connected(xs, x, y):
-    return not _is_child(xs, x, y) and not _is_child(xs, y, x)
+    p1 = _all_parents(xs, x)
+    p2 = _all_parents(xs, y)
+
+    return len(p1.intersection(p2)) > 0
 
 
 def random_network(num_vars, num_values, polytree=False, p=0.1):
@@ -88,7 +99,7 @@ def random_network(num_vars, num_values, polytree=False, p=0.1):
         nodes += [[]]
         if polytree:
             for p in parents:
-                if not _is_child(nodes, x, p):
+                if not _is_connected(nodes, x, p):
                     nodes[-1] += [p]
 
         # print parents
