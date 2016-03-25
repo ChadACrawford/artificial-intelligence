@@ -24,3 +24,6 @@ tramp
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
+
+## Data files
+*.pdf

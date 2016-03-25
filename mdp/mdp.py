@@ -23,3 +23,31 @@ class MDP:
 
         """
         pass
+
+
+class ContinuousStateMDP:
+    def __init__(self):
+        pass
+
+    @property
+    def num_dimensions(self):
+        return len(self.dimensions)
+
+    @property
+    def dimensions(self):
+        raise NotImplementedError
+
+    def start(self):
+        raise NotImplementedError
+
+    def actions(self, s):
+        raise NotImplementedError
+
+    def is_terminal(self, s):
+        raise NotImplementedError
+
+    def r(self, s1, s2):
+        raise NotImplementedError
+
+    def act(self, s, a):
+        pass
