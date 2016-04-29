@@ -71,11 +71,59 @@ def qlearn2(m, f, alpha=0.5, gamma=1.0, epsilon=0.2, num_episodes=1000):
             t += 1
         print episode+1, t, s, r2
 
-
     pi = lambda s: max([(a, sum(theta[a] * f.features(s))) for a in m.actions(s)], key=lambda x: x[1])[0]
     f_exp = lambda s: max(sum(theta[a] * f.features(s)) for a in m.actions(s))
     return pi, f_exp, theta
 
+
+def qlearn3(m, f, alpha=0.3, gamma=1.0, epsilon=0.3, num_episodes=1000):
+    actions = m.actions()
+    theta = dict()
+    for a in actions:
+        theta[a] = np.zeros((f.num_features,))
+    for episode in range(num_episodes):
+        t = 0
+        s = m.start()
+        a = npr.choice(m.actions(s))
+        q = 0
+        hist = []
+        # delta_hist = []
+        # s_hist = []
+        # a_hist = []
+        while not m.is_terminal(s) and t < 3000:
+            s2, r2 = m.act(s, a)
+            # if r2 < -1 or s2[0] > 5 and s2[1] < 5:
+            #     print "wat", s2, r2
+            qp = sum(theta[a] * f.features(s))
+            # print a, s, s2, r2, [(a, r2 + gamma * qp) for a in m.actions(s)]
+            actions = m.actions(s)
+            random.shuffle(actions)
+            a2, q2 = max([(a2, r2 + gamma * sum(theta[a2] * f.features(s2))) for a2 in actions], key=lambda x: x[1])
+            delta = q2 - qp
+            # if random.random() < 0.01:
+            #     print delta
+            # print a, delta, s, s2
+            hist.append((s, a, s2, r2))
+            # theta[a] += alpha * delta * (f.features(s))
+
+            if npr.random() < epsilon:
+                a2 = npr.choice(m.actions(s))
+            q = q2
+            s = s2
+            a = a2
+            t += 1
+            r_final = r2
+
+        for s, a, s2, r2 in reversed(hist):
+            q = sum(theta[a] * f.features(s))
+            q2 = max(r2 + gamma * sum(theta[a2] * f.features(s2)) for a2 in m.actions(s))
+            theta[a] += alpha * (q2 - q) * f.features(s)
+
+        print episode+1, t, s, r_final
+
+    pi = lambda s: max([(a, sum(theta[a] * f.features(s))) for a in m.actions(s)], key=lambda x: x[1])[0]
+    f_exp = lambda s: max(sum(theta[a] * f.features(s)) for a in m.actions(s))
+    return pi, f_exp, theta
 
 
 def feature_estimate(m, s, a, f):

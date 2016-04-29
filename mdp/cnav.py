@@ -138,12 +138,14 @@ def gen_heatmap_2(f, xmin, xmax, ymin, ymax, dx, dy):
 import pprint
 
 
-def run():
+def run(is_tile):
     m, xmin, xmax, ymin, ymax = mdp1()
     fig = plt.gcf()
-    # f = lf.TileEncoding(m, 5, 1, 14)
-    f = lf.RadialBasis(m, 200, 2)
-    pi, f_exp, theta = lf.qlearn2(m, f, num_episodes=500)
+    if is_tile:
+        f = lf.TileEncoding(m, 5, 1, 14)
+    else:
+        f = lf.RadialBasis(m, 200, 2)
+    pi, f_exp, theta = lf.qlearn3(m, f, num_episodes=500)
     # pp = pprint.PrettyPrinter()
     # pp.pprint(theta)
     heatmap = gen_heatmap(f_exp, f, xmin, xmax, ymin, ymax, 0.1, 0.1)
@@ -166,7 +168,10 @@ def run():
     y = [10*y_i for y_i in y]
     plt.quiver(x, y, vx, vy)
     plt.show()
-    plt.savefig("radial_basis.pdf", format="pdf")
+    # if is_tile:
+    #     plt.savefig("tile_coding_v3.pdf", format="pdf")
+    # else:
+    #     plt.savefig("radial_basis_v3.pdf", format="pdf")
 
 
 def test():
@@ -180,4 +185,5 @@ def test():
         s = s2
 
 if __name__ == '__main__':
-    run()
+    # run(True)
+    run(False)
